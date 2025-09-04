@@ -1,35 +1,36 @@
+/// Widget to display a chat message bubble with sender identification
 import 'package:flutter/material.dart';
 
-/// Widget to display a chat message bubble with sender identification
 class MessageBubble extends StatelessWidget {
   final String text;
-  final String senderId;
+  final String senderName;
   final bool isCurrentUser;
 
   const MessageBubble({
     Key? key,
     required this.text,
-    required this.senderId,
+    required this.senderName,
     required this.isCurrentUser,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final alignment = isCurrentUser
+    final Alignment alignment = isCurrentUser
         ? Alignment.centerRight
         : Alignment.centerLeft;
-    final color = isCurrentUser ? Colors.blue[200] : Colors.grey[300];
-    final borderRadius = isCurrentUser
-        ? const BorderRadius.only(
+    final Color? color = isCurrentUser ? Colors.blue[200] : Colors.grey[300];
+    final BorderRadius borderRadius = isCurrentUser
+        ? BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
             bottomLeft: Radius.circular(16),
           )
-        : const BorderRadius.only(
+        : BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
             bottomRight: Radius.circular(16),
           );
+
     return Align(
       alignment: alignment,
       child: Container(
@@ -40,17 +41,17 @@ class MessageBubble extends StatelessWidget {
           crossAxisAlignment: isCurrentUser
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text(
-              isCurrentUser ? 'You' : senderId,
+              isCurrentUser ? 'You' : senderName,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[700],
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(text, style: const TextStyle(fontSize: 16)),
+            SizedBox(height: 4),
+            Text(text, style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

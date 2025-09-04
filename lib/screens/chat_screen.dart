@@ -110,11 +110,12 @@ class ChatScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final msg = messages[index].data();
                             final senderId = msg['senderId'] ?? '';
+                            final senderName = msg['senderName'] ?? 'Unknown';
                             final text = msg['text'] ?? '';
                             final isCurrentUser = senderId == currentUserUid;
                             return MessageBubble(
                               text: text,
-                              senderId: senderId,
+                              senderName: senderName,
                               isCurrentUser: isCurrentUser,
                             );
                           },
@@ -135,9 +136,16 @@ class ChatScreen extends StatelessWidget {
                           return;
                         }
                         final senderId = currentUserUid;
+                        final senderName =
+                            Provider.of<AuthService>(
+                              context,
+                              listen: false,
+                            ).currentUserName ??
+                            'Unknown';
                         final success = await firestoreService.sendMessage(
                           chatId: chatId,
                           senderId: senderId,
+                          senderName: senderName,
                           text: text,
                         );
                         if (!success) {

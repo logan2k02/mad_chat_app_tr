@@ -16,10 +16,22 @@ class HomeScreen extends StatelessWidget {
       listen: false,
     );
     final authService = Provider.of<AuthService>(context, listen: false);
-    final currentUserUid = authService.currentUserUid;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Instant Chat'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Instant Chat'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              await authService.signOut();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(

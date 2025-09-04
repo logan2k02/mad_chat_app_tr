@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'screens/chat_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/qr_generator_screen.dart';
 import 'screens/qr_scanner_screen.dart';
+import 'screens/register_screen.dart';
 import 'services/auth_service.dart';
 import 'services/firestore_service.dart';
 
@@ -77,21 +79,60 @@ class _MainAppState extends State<MainApp> {
           '/': (context) => _initialized
               ? (_error != null
                     ? Scaffold(body: Center(child: Text(_error!)))
-                    : const HomeScreen())
+                    : const LoginScreen())
               : const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
                 ),
+          '/home': (context) {
+            final authService = Provider.of<AuthService>(
+              context,
+              listen: false,
+            );
+            if (authService.isEmailVerified) {
+              return const HomeScreen();
+            } else {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Email Verification Required'),
+                ),
+                body: const Center(
+                  child: Text('Please verify your email to access the app.'),
+                ),
+              );
+            }
+          },
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterScreen(),
           '/qr_generator': (context) => const QrGeneratorScreen(),
           '/qr_scanner': (context) => const QrScannerScreen(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/chat') {
             final chatId = settings.arguments as String?;
-            if (chatId != null) {
-              return MaterialPageRoute(
-                builder: (context) => ChatScreen(chatId: chatId),
-              );
-            }
+            return MaterialPageRoute(
+              builder: (context) {
+                final authService = Provider.of<AuthService>(
+                  context,
+                  listen: false,
+                );
+                if (!authService.isEmailVerified) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Email Verification Required'),
+                    ),
+                    body: const Center(
+                      child: Text('Please verify your email to access chat.'),
+                    ),
+                  );
+                }
+                if (chatId != null) {
+                  return ChatScreen(chatId: chatId);
+                }
+                return const Scaffold(
+                  body: Center(child: Text('Invalid chat ID.')),
+                );
+              },
+            );
           }
           return null;
         },

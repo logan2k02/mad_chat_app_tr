@@ -33,6 +33,7 @@ class FirestoreService {
   Future<bool> sendMessage({
     required String chatId,
     required String senderId,
+    required String senderName,
     required String text,
   }) async {
     try {
@@ -43,6 +44,7 @@ class FirestoreService {
           .doc();
       await messageRef.set({
         'senderId': senderId,
+        'senderName': senderName,
         'text': text,
         'timestamp': FieldValue.serverTimestamp(),
       });
