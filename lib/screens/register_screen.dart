@@ -19,11 +19,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     setState(() => _loading = true);
     final authService = Provider.of<AuthService>(context, listen: false);
-    final result = await authService.registerWithEmail(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      displayName: _nameController.text.trim(),
-    );
+    String? errorMessage;
+    final result = await authService
+        .registerWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          displayName: _nameController.text.trim(),
+        )
+        .catchError((e) {
+          errorMessage = e.toString();
+          return null;
+        });
     setState(() => _loading = false);
     if (result != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -35,9 +41,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       Navigator.pushReplacementNamed(context, '/login');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Registration failed.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed. ${errorMessage ?? ''}')),
+      );
     }
   }
 
