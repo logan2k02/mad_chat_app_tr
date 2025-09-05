@@ -24,14 +24,14 @@ class _MessageInputState extends State<MessageInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF232D36),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 4,
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -42,19 +42,19 @@ class _MessageInputState extends State<MessageInput> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                hintText: 'Message',
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: const Color(0xFF2B3942),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+                  horizontal: 16,
+                  vertical: 12,
                 ),
               ),
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16, color: Colors.white),
               onSubmitted: (_) => _handleSend(),
             ),
           ),
@@ -62,7 +62,7 @@ class _MessageInputState extends State<MessageInput> {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: IconButton(
               icon: const Icon(Icons.send, color: Colors.white),

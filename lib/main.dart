@@ -71,7 +71,42 @@ class _MainAppState extends State<MainApp> {
         debugShowCheckedModeBanner: false,
         title: 'Instant Chat',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF222D36),
+          primaryColor: const Color(0xFF2AABEE),
+          colorScheme: ColorScheme.dark(
+            primary: Color(0xFF2AABEE),
+            secondary: Color(0xFF222D36),
+            background: Color(0xFF222D36),
+            surface: Color(0xFF232D36),
+            onPrimary: Colors.white,
+            onSecondary: Colors.white70,
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF232D36),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            titleTextStyle: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.white, fontSize: 16),
+            bodyMedium: TextStyle(color: Colors.white70, fontSize: 14),
+            bodySmall: TextStyle(color: Colors.white54, fontSize: 12),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Color(0xFF232D36),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+              borderSide: BorderSide.none,
+            ),
+            hintStyle: TextStyle(color: Colors.white38),
+          ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: '/',

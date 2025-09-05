@@ -18,25 +18,39 @@ class MessageBubble extends StatelessWidget {
     final Alignment alignment = isCurrentUser
         ? Alignment.centerRight
         : Alignment.centerLeft;
-    final Color? color = isCurrentUser ? Colors.blue[200] : Colors.grey[300];
+    final Color color = isCurrentUser
+        ? const Color(0xFF2AABEE) // Telegram blue
+        : const Color(0xFF343A40); // Lighter dark for receiver bubble
     final BorderRadius borderRadius = isCurrentUser
-        ? BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(16),
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(6),
+            bottomLeft: Radius.circular(18),
+            bottomRight: Radius.circular(18),
           )
-        : BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomRight: Radius.circular(16),
+        : const BorderRadius.only(
+            topLeft: Radius.circular(6),
+            topRight: Radius.circular(18),
+            bottomLeft: Radius.circular(18),
+            bottomRight: Radius.circular(18),
           );
 
     return Align(
       alignment: alignment,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: color, borderRadius: borderRadius),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: isCurrentUser
               ? CrossAxisAlignment.end
@@ -46,12 +60,18 @@ class MessageBubble extends StatelessWidget {
               isCurrentUser ? 'You' : senderName,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[700],
+                color: isCurrentUser ? Colors.white70 : Colors.white38,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 4),
-            Text(text, style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 4),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                color: isCurrentUser ? Colors.white : Colors.white,
+              ),
+            ),
           ],
         ),
       ),
