@@ -11,6 +11,7 @@ import 'screens/qr_scanner_screen.dart';
 import 'screens/register_screen.dart';
 import 'services/auth_service.dart';
 import 'services/firestore_service.dart';
+import 'services/in_app_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,6 +67,7 @@ class _MainAppState extends State<MainApp> {
       providers: [
         Provider<AuthService>.value(value: _authService),
         Provider<FirestoreService>(create: (_) => FirestoreService()),
+        ChangeNotifierProvider(create: (_) => InAppNotificationService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

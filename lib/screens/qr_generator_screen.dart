@@ -102,10 +102,7 @@ class _QrGeneratorScreenState extends State<QrGeneratorScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Chat ID: $_chatId',
-                    style: const TextStyle(fontSize: 13, color: Colors.grey),
-                  ),
+                  // Chat ID hidden for privacy
                   const SizedBox(height: 16),
                   const Text('Scan this QR to join the chat:'),
                   const SizedBox(height: 24),

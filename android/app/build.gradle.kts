@@ -12,7 +12,7 @@ android {
     namespace = "com.example.chat_app_tr"
     compileSdk = flutter.compileSdkVersion
     // ndkVersion = flutter.ndkVersion
-    ndkVersion = "29.0.14033849"
+    // ndkVersion = "29.0.14033849"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

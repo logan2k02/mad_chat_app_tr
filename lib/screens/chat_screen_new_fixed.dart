@@ -78,8 +78,17 @@ class _ChatScreenState extends State<ChatScreen> {
         return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: firestoreService.streamMessages(widget.chatId),
           builder: (context, snapshot) {
-            // Note: Removed notification incrementing from build method
-            // as it causes setState during build error
+            // Auto-scroll logic with message count tracking
+            if (snapshot.hasData) {
+              final messages = snapshot.data?.docs ?? [];
+              if (messages.length > _previousMessageCount) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollToBottom();
+                });
+                _previousMessageCount = messages.length;
+              }
+            }
+
             return FutureBuilder<String?>(
               future: _getChatTitle(),
               builder: (context, titleSnapshot) {
@@ -88,9 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   appBar: AppBar(
                     title: Text(chatTitle),
                     centerTitle: true,
-                    backgroundColor: const Color(
-                      0xFF263A4D,
-                    ), // Slightly different blue-grey
+                    backgroundColor: const Color(0xFF263A4D),
                     elevation: 0,
                     actions: [
                       IconButton(
@@ -152,70 +159,62 @@ class _ChatScreenState extends State<ChatScreen> {
                         ],
                       ),
                     ],
-                    // Chat ID hidden for privacy
                   ),
                   body: Container(
                     color: const Color(0xFF222D36),
                     child: Column(
                       children: [
                         Expanded(
-                          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                            stream: firestoreService.streamMessages(
-                              widget.chatId,
-                            ),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return const Center(
-                                  child: Text('Error loading messages'),
-                                );
-                              }
-                              final messages = snapshot.data?.docs ?? [];
-                              if (messages.isEmpty) {
-                                return const Center(
-                                  child: Text('No messages yet.'),
-                                );
-                              }
-
-                              // Only auto-scroll when new messages are added
-                              if (messages.length > _previousMessageCount) {
-                                WidgetsBinding.instance.addPostFrameCallback((
-                                  _,
-                                ) {
-                                  _scrollToBottom();
-                                });
-                                _previousMessageCount = messages.length;
-                              }
-
-                              return ListView.builder(
-                                controller: _scrollController,
-                                reverse: true,
-                                itemCount: messages.length,
-                                itemBuilder: (context, index) {
-                                  // Reverse the index since we're using reverse: true
-                                  final reversedIndex =
-                                      messages.length - 1 - index;
-                                  final msg = messages[reversedIndex].data();
-                                  final senderId = msg['senderId'] ?? '';
-                                  final senderName =
-                                      msg['senderName'] ?? 'Unknown';
-                                  final text = msg['text'] ?? '';
-                                  final isCurrentUser =
-                                      senderId == currentUserUid;
-                                  return MessageBubble(
-                                    text: text,
-                                    senderName: senderName,
-                                    isCurrentUser: isCurrentUser,
+                          child:
+                              StreamBuilder<
+                                QuerySnapshot<Map<String, dynamic>>
+                              >(
+                                stream: firestoreService.streamMessages(
+                                  widget.chatId,
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Center(
+                                      child: Text('Error loading messages'),
+                                    );
+                                  }
+                                  final messages = snapshot.data?.docs ?? [];
+                                  if (messages.isEmpty) {
+                                    return const Center(
+                                      child: Text('No messages yet.'),
+                                    );
+                                  }
+                                  return ListView.builder(
+                                    controller: _scrollController,
+                                    reverse:
+                                        true, // Show newest messages at bottom
+                                    itemCount: messages.length,
+                                    itemBuilder: (context, index) {
+                                      final reversedIndex =
+                                          messages.length - 1 - index;
+                                      final msg = messages[reversedIndex]
+                                          .data();
+                                      final senderId = msg['senderId'] ?? '';
+                                      final senderName =
+                                          msg['senderName'] ?? 'Unknown';
+                                      final text = msg['text'] ?? '';
+                                      final isCurrentUser =
+                                          senderId == currentUserUid;
+                                      return MessageBubble(
+                                        text: text,
+                                        senderName: senderName,
+                                        isCurrentUser: isCurrentUser,
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                          ),
+                              ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -236,6 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     listen: false,
                                   ).currentUserName ??
                                   'Unknown';
+
                               final success = await firestoreService
                                   .sendMessage(
                                     chatId: widget.chatId,
@@ -243,6 +243,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     senderName: senderName,
                                     text: text,
                                   );
+
                               if (!success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
